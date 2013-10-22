@@ -35,9 +35,9 @@ repo. (See 'Current Issues', below.)
 
 After downloading the project, cd to the directory in which the pom.xml is located, then issue the 2 commands:
 
- mvn clean install
+     mvn clean install
 
- mvn exec:java -Dexec.mainClass=TestKafkaProducer
+     mvn exec:java -Dexec.mainClass=TestKafkaProducer
 
 If you see 'SUCCESS' printed out towards the very end, then you know everything is working.
 
@@ -153,53 +153,53 @@ member variable, at line 95)  These messages are sent via sendMessages() at line
 Listing 2, TestKafkaProducer Constructor 
 
 
-    83	TestKafkaProducer(String topic, String zkConnectString, int numRandomMessages) throws IOException {
-    84	    final Random generator = new Random();
-    85	
-    86	    if (numRandomMessages <= 0) {
-    87	        throw new RuntimeException("no messages defined for test");
-    88	    }
-    89	
-    90	    messages = new ArrayList<String>();
-    91	    for (int i = 0; i < numRandomMessages; i++) {
-    92	        int num1 = Math.abs(generator.nextInt());
-    93	        int num2 = Math.abs(generator.nextInt());
-    94	        String messageToSend = num1 + ":-(a)-" + num2;
-    95	        messages.add(messageToSend);
-    96	    }
-    97	
-    98	
-    99	    this.topic = topic;
-   100	
-   101	    this.zkConnectString = zkConnectString;
-   102	    initProducer(zkConnectString);
-   103	}
-   104	
-   105	
-   106	public void sendMessages() throws IOException {
-   107	    for (String msg : messages) {
-   108	        sendMessage(msg);
-   109	    }
-   110	}
-   111	
-   112	private void sendMessage(String msg) {
-   113	    ProducerData<String, String> data = new ProducerData<String, String>(topic, msg);
-   114	    producer.send(data);
-   115	}
-   116	
-   117	private void initProducer(String zkConnectString) throws IOException {
-   118	    kafkaServer =  startKafkaServer();
-   119	
-   120	
-   121	    Properties props = new Properties();
-   122	    props.put("zk.connect", zkConnectString);
-   123	    props.put("serializer.class", "kafka.serializer.StringEncoder");
-   124	    props.put("producer.type", "async");
-   125	    props.put("batch.size", "1");
-   126	    ProducerConfig config = new ProducerConfig(props);
-   127	
-   128	    producer = new Producer<String, String>(config);
-   129	}
+        83	TestKafkaProducer(String topic, String zkConnectString, int numRandomMessages) throws IOException {
+        84	    final Random generator = new Random();
+        85	
+        86	    if (numRandomMessages <= 0) {
+        87	        throw new RuntimeException("no messages defined for test");
+        88	    }
+        89	
+        90	    messages = new ArrayList<String>();
+        91	    for (int i = 0; i < numRandomMessages; i++) {
+        92	        int num1 = Math.abs(generator.nextInt());
+        93	        int num2 = Math.abs(generator.nextInt());
+        94	        String messageToSend = num1 + ":-(a)-" + num2;
+        95	        messages.add(messageToSend);
+        96	    }
+        97	
+        98	
+        99	    this.topic = topic;
+       100	
+       101	    this.zkConnectString = zkConnectString;
+       102	    initProducer(zkConnectString);
+       103	}
+       104	
+       105	
+       106	public void sendMessages() throws IOException {
+       107	    for (String msg : messages) {
+       108	        sendMessage(msg);
+       109	    }
+       110	}
+       111	
+       112	private void sendMessage(String msg) {
+       113	    ProducerData<String, String> data = new ProducerData<String, String>(topic, msg);
+       114	    producer.send(data);
+       115	}
+       116	
+       117	private void initProducer(String zkConnectString) throws IOException {
+       118	    kafkaServer =  startKafkaServer();
+       119	
+       120	
+       121	    Properties props = new Properties();
+       122	    props.put("zk.connect", zkConnectString);
+       123	    props.put("serializer.class", "kafka.serializer.StringEncoder");
+       124	    props.put("producer.type", "async");
+       125	    props.put("batch.size", "1");
+       126	    ProducerConfig config = new ProducerConfig(props);
+       127	
+       128	    producer = new Producer<String, String>(config);
+       129	}
 
 
 
@@ -218,8 +218,7 @@ We make sure that the consumer has completed its shut down by joining its thread
 
 I have been struggling to find a Maven pom.xml recipe that will allow me to pull in an official version of 
 Kafka from a public Maven repository.  Kafka is a very recent project so many of the currently available on-line 
-examples (as of this writing -- October of 2013) don't seem to build correctly out of the box (at least for me.)  
-By contributing this project at least the 'run out of the box'requirement should be met.
+examples (as of this writing -- October of 2013) don't seem to build correctly out of the box (at least for me.)  By contributing this project at least the 'run out of the box'requirement should be met.
 
 Many examples depend on using maven install-file to get a Kafka jar that you build yourself from sources into your local 
 repo ($HOME/.m2/repository).  A recent stack exchange article 
@@ -232,7 +231,10 @@ accordingly.... Hopefully it will serve as a useful resource for other beginning
 
 
 For now, I have hacked my dependencies so that the version of Kafka I use is pulled from a work-in-progress
-version of a storm-kafka integration project.  Well... it works for now... But sure looks like a hack !
+version of a storm-kafka integration project.  Well... it works for now, but I'm concerned the 'wip' versions
+below will be deprecated. Then this project will loose its dependencies and fail to build properly. 
+Also,  I really shouldn't be introducing storm for this simple Kafka example at this point in any case.
+
 
 
        <dependency>
