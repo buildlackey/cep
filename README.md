@@ -1,6 +1,20 @@
 
 
+This project includes:
+
+    unit tests and sample programs that illustrate how to 
+    develop complex event processing (CEP) applications on top of Storm, Kafka 
+    and Esper.
+
+    a Wiki containing notes on best practices and guidelines for using 
+    the above frameworks for CEP development.
+
+
+
 Subdirectories:
+
+
+
 
 kafka
 
