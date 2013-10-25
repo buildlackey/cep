@@ -12,5 +12,5 @@ storm+kafka
 
     includes
 
-        * An Integration test that pushes messages into Kafka and retrieves those messages with a Kafka/Storm bolt.
+        * An Integration test that pushes messages into Kafka and retrieves those messages with a Kafka/Storm spout.
 
