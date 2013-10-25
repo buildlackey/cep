@@ -1,0 +1,15 @@
+# Eclipse Junk
+.classpath
+.project
+.settings/
+
+# Intellij Junk
+.idea/
+*.iml
+*.iws
+
+# Maven Junk
+log/
+target/
+
+
