@@ -29,7 +29,7 @@ Kafka Storm integration working in the environments of other developers and/or b
 
 After downloading the project, cd to the directory in which  this README is located, then issue the 2 commands:
 
-     mvn clean 
+     mvn clean  compile
 
      mvn exec:java -Dexec.mainClass=TestTopology
 
