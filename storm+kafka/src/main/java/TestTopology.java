@@ -115,11 +115,13 @@ public class TestTopology {
 
 
         try {
-            Thread producer = topo.startProducer();
-            producer.join();
 
             topo.setupKafkaSpoutAndSubmitTopology();
             //pauseUntil();
+
+            Thread producer = topo.startProducer();
+            producer.join();
+
             topo.awaitResults();
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -148,12 +150,17 @@ public class TestTopology {
 
 
     private void awaitResults() {
-        await().atMost(20, SECONDS).until(new Callable<Boolean>() {
+        // Strange behavior below. even though I specify 'SECONDS' it seems like my value
+        // is being treated as milliseconds -- punting on this for now
+        await().atMost(600000, SECONDS).until(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
                 return finishedCollecting;
             }
         });
+
+
+
         System.out.println("after await");
     }
 
@@ -199,30 +206,21 @@ public class TestTopology {
     }
 
     private void setupKafkaSpoutAndSubmitTopology() throws InterruptedException {
-        Thread topoThread = new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        BrokerHosts brokerHosts = new ZkHosts("localhost:2000");
+        BrokerHosts brokerHosts = new ZkHosts("localhost:2000");
 
-                        SpoutConfig kafkaConfig = new SpoutConfig(brokerHosts, TOPIC_NAME, "", "storm");
-                        kafkaConfig.forceStartOffsetTime(-2 /* earliest offset */);
-                        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+        SpoutConfig kafkaConfig = new SpoutConfig(brokerHosts, TOPIC_NAME, "", "storm");
+        kafkaConfig.forceStartOffsetTime(-2 /* earliest offset */);
+        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
 
 
-                        TopologyBuilder builder = new TopologyBuilder();
-                        builder.setSpout("words", new KafkaSpout(kafkaConfig), 1);
-                        builder.setBolt("print", new VerboseCollectorBolt(1)).shuffleGrouping("words");
+        TopologyBuilder builder = new TopologyBuilder();
+        builder.setSpout("words", new KafkaSpout(kafkaConfig), 1);
+        builder.setBolt("print", new VerboseCollectorBolt(1)).shuffleGrouping("words");
 
 
-                        Config config = new Config();
+        Config config = new Config();
 
-                        cluster.submitTopology("kafka-test", config, builder.createTopology());
-
-                    }
-                },
-                "topoThread");
-        topoThread.start();
+        cluster.submitTopology("kafka-test", config, builder.createTopology());
     }
 
     private void shutdown() {

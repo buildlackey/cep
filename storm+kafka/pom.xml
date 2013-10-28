@@ -37,6 +37,9 @@
             <version>0.9.0-rc2</version>
         </dependency>
 
+
+        <!--  Including src jars for kafka spout for debugging. can remove these if we enable the dependency below -->
+
         <!-- this component below seems  to depend on
              org.apache.kafka:kafka_2.10:jar:0.8.0-beta1, which can't be found,
              I therefore put in the exclude marked as  EXCLUDE UNRESOLVABLE SCALA.
