@@ -41,7 +41,7 @@ public class TestTopology {
     private static final int SECOND = 1000;
     private static List<String> messagesReceived = new ArrayList<String>();
 
-    private LocalCluster  cluster = new LocalCluster();
+    private LocalCluster cluster = new LocalCluster();
     private KafkaServer kafkaServer = null;
 
     private static final String TOPIC_NAME = "big-topix-" + new Random().nextInt();
@@ -76,9 +76,9 @@ public class TestTopology {
 
         @Override
         public void execute(Tuple tuple, BasicOutputCollector collector) {
-            final String  msg = tuple.toString();
+            final String msg = tuple.toString();
 
-            System.out.println(">>>>>>>>>>>>>"  + msg);
+            System.out.println(">>>>>>>>>>>>>" + msg);
             countReceivedMessages++;
             recordRecievedMessage(msg);
             if (countReceivedMessages == expectedNumMessages) {
@@ -88,9 +88,27 @@ public class TestTopology {
 
     }
 
+    private static void pauseUntil() {
+        boolean fileExists = false;
+        while (! fileExists ) {
+            File pauseFile = new File("/tmp/go");
+            if (! pauseFile.exists())  {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            } else {
+                fileExists = true;
+            }
+
+        }
+
+    }
+
     public static void main(String[] args) {
         TestTopology topo = new TestTopology();
-        waitForServerUp("localhost", 2000, 5 * SECOND );            // Wait for zookeeper to come up
+        waitForServerUp("localhost", 2000, 5 * SECOND);            // Wait for zookeeper to come up
         topo.startKafkaServer();
 
         createTopic();
@@ -101,6 +119,7 @@ public class TestTopology {
             producer.join();
 
             topo.setupKafkaSpoutAndSubmitTopology();
+            //pauseUntil();
             topo.awaitResults();
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -120,13 +139,12 @@ public class TestTopology {
         arguments[2] = "--replica";
         arguments[3] = "1";
         arguments[4] = "--partition";
-        arguments[5] = "2";
+        arguments[5] = "1";
         arguments[6] = "--topic";
         arguments[7] = TOPIC_NAME;
 
         CreateTopicCommand.main(arguments);
     }
-
 
 
     private void awaitResults() {
@@ -139,16 +157,19 @@ public class TestTopology {
         System.out.println("after await");
     }
 
-    private void verifyResults() {
-        int count = 0;
-        for (String msg : messagesReceived) {
-            if (msg.contains("cat") || msg.contains("dog") || msg.contains("bear") || msg.contains("goat")) {
-                count++;
+    private static void verifyResults() {
+        synchronized (TestTopology.class) {                 // ensure visibility of list updates between threads
+            int count = 0;
+            for (String msg : messagesReceived) {
+                if (msg.contains("cat") || msg.contains("dog") || msg.contains("bear") || msg.contains("goat")) {
+                    count++;
+                }
             }
-        }
-        if ( count != 4) {
-            System.out.println(">>>>>>>>>>>>>>>>>>>>FAILURE -   Did not receive expected messages");
-            System.exit(-1);
+            if (count != 4) {
+                System.out.println(">>>>>>>>>>>>>>>>>>>>FAILURE -   Did not receive expected messages");
+                System.exit(-1);
+            }
+
         }
     }
 
@@ -178,21 +199,30 @@ public class TestTopology {
     }
 
     private void setupKafkaSpoutAndSubmitTopology() throws InterruptedException {
-        BrokerHosts brokerHosts = new ZkHosts("localhost:2000");
+        Thread topoThread = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        BrokerHosts brokerHosts = new ZkHosts("localhost:2000");
 
-        SpoutConfig kafkaConfig = new SpoutConfig(brokerHosts, TOPIC_NAME, "", "storm");
-        kafkaConfig.forceStartOffsetTime(-2 /* earliest offset */);
-        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
+                        SpoutConfig kafkaConfig = new SpoutConfig(brokerHosts, TOPIC_NAME, "", "storm");
+                        kafkaConfig.forceStartOffsetTime(-2 /* earliest offset */);
+                        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
 
 
-        TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("words", new KafkaSpout(kafkaConfig), 10);
-        builder.setBolt("print", new VerboseCollectorBolt(4)).shuffleGrouping("words");
+                        TopologyBuilder builder = new TopologyBuilder();
+                        builder.setSpout("words", new KafkaSpout(kafkaConfig), 1);
+                        builder.setBolt("print", new VerboseCollectorBolt(1)).shuffleGrouping("words");
 
 
-        Config config = new Config();
+                        Config config = new Config();
 
-        cluster.submitTopology("kafka-test", config, builder.createTopology());
+                        cluster.submitTopology("kafka-test", config, builder.createTopology());
+
+                    }
+                },
+                "topoThread");
+        topoThread.start();
     }
 
     private void shutdown() {
@@ -202,7 +232,7 @@ public class TestTopology {
 
 
     private void startKafkaServer() {
-        File tmpDir =  Files.createTempDir();
+        File tmpDir = Files.createTempDir();
         Properties props = createProperties(tmpDir.getAbsolutePath(), 9092, 1);
         KafkaConfig kafkaConfig = new KafkaConfig(props);
 
@@ -221,11 +251,8 @@ public class TestTopology {
     }
 
 
-
-
     public static String send4LetterWord(String host, int port, String cmd)
-        throws IOException
-    {
+            throws IOException {
         System.out.println("connecting to " + host + " " + port);
         Socket sock = new Socket(host, port);
         BufferedReader reader = null;
@@ -237,11 +264,11 @@ public class TestTopology {
             sock.shutdownOutput();
 
             reader =
-                new BufferedReader(
-                        new InputStreamReader(sock.getInputStream()));
+                    new BufferedReader(
+                            new InputStreamReader(sock.getInputStream()));
             StringBuilder sb = new StringBuilder();
             String line;
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 sb.append(line + "\n");
             }
             return sb.toString();
@@ -265,7 +292,7 @@ public class TestTopology {
                 }
             } catch (IOException e) {
                 // ignore as this is expected
-                System.out.println("server " + host  +  ":" + port + " not up " + e);
+                System.out.println("server " + host + ":" + port + " not up " + e);
             }
 
             if (System.currentTimeMillis() > start + timeout) {
