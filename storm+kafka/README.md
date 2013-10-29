@@ -57,21 +57,21 @@ The main method creates an instance of the TestTopology class whose constructor 
 instance of a Storm LocalCluster. We use the  Zookeeper server in that LocalCluster instance 
 since there doesn't seem to be anyway to instantiate  our own Zookeeper and pass that into the 
 LocalCluster (as mentioned above.).  Next, we wait for that Zookeeper instance to come up completely
-(line 69.)  We then start our Kafka server using the Zookeeper instance  created by LocalCluster. 
+(line 69 of listing 1.)  We then start our Kafka server using the Zookeeper instance  created by LocalCluster. 
 This is done by hard coding the default value for the Storm LocalCluster's self launched zookeeper
 server to its preferred host/port value (localhost:2000). See lines 74 and 103 of Listing 2. 
 
 The Kafka producer thread  kicked  off at  line 77 of listing 1  emits a batch of 4 messages
 BEFORE our topology is even initialized (line 40  of listing 2). After emitting that first batch
 the producer thread unleashes the countdown latch 'producerFinishedInitialBatchLatch'. 
-This lets the main thread proceed from its wait at line 78.  The next thing the main thread 
-does is to Next we set up our test topology, which includes a Kafka spout configured to connect to the Zookeeper 
+This lets the main thread proceed from its wait at line 78 of listing 1.  The main thread 
+then sets up our test topology, which includes a Kafka spout configured to connect to the Zookeeper 
 instance at port 2000. This the same zookeeper instance that we use when we configure 
 the Kafka server, so it seems the Kafka spout discovers the 
 Kafka broker it needs to connect with via Zookeeper.  Our topology wires the 
 Kafka spout to our VerboseCollectorBolt instance whose only job is to dump each tuple it receives
-to the console, and collect up each sentence it is transmitted.   In verifyResults (line 102) 
-we check to make sure that what the VerboseCollectorBolt has recorded actually matches what 
+to the console, and collect up each sentence it is transmitted.   In verifyResults (line 102 of 
+listing 1) we check to make sure that what the VerboseCollectorBolt has recorded actually matches what 
 we know we have sent. 
 
 Note that after we setup our topology (line 80 of Listing 1), we give it a few seconds to launch, then 
@@ -80,6 +80,7 @@ point at line 43 of Listing 2 and emit the second batch of messages.
 
 
 Listing 1, TestTopology.java
+
         1	/*                                                                                                                                           
         2	 * Author: cbedford
         3	 * Date: 10/22/13
