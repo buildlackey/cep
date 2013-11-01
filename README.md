@@ -22,6 +22,17 @@ kafka
 
         * A Simple Kafka Produce/Consumer Example With In-Memory Kafka and Zookeeper Test Fixture Servers
 
+            (for Kafka 0.7.x)
+
+
+kafka-0.8.x
+
+    includes
+
+        * A Simple Kafka Produce/Consumer Example With In-Memory Kafka and Zookeeper Test Fixture Servers
+
+            (for Kafka 0.8.x)
+
 storm+kafka
 
     includes
