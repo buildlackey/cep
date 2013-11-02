@@ -1,0 +1,112 @@
+2013-10-27 15:24:21,823 [myid:] - INFO  [main:QuorumPeerConfig@101] - Reading configuration from: /home/chris/esper/zookeeper/bin/../conf/zoo.cfg
+2013-10-27 15:24:21,845 [myid:] - INFO  [main:DatadirCleanupManager@78] - autopurge.snapRetainCount set to 3
+2013-10-27 15:24:21,852 [myid:] - INFO  [main:DatadirCleanupManager@79] - autopurge.purgeInterval set to 0
+2013-10-27 15:24:21,855 [myid:] - INFO  [main:DatadirCleanupManager@101] - Purge task is not scheduled.
+2013-10-27 15:24:21,858 [myid:] - WARN  [main:QuorumPeerMain@113] - Either no config or no quorum defined in config, running  in standalone mode
+2013-10-27 15:24:21,927 [myid:] - INFO  [main:QuorumPeerConfig@101] - Reading configuration from: /home/chris/esper/zookeeper/bin/../conf/zoo.cfg
+2013-10-27 15:24:21,933 [myid:] - INFO  [main:ZooKeeperServerMain@95] - Starting server
+2013-10-27 15:24:21,978 [myid:] - INFO  [main:Environment@100] - Server environment:zookeeper.version=3.4.5-1392090, built on 09/30/2012 17:52 GMT
+2013-10-27 15:24:21,980 [myid:] - INFO  [main:Environment@100] - Server environment:host.name=ubuntu
+2013-10-27 15:24:21,983 [myid:] - INFO  [main:Environment@100] - Server environment:java.version=1.7.0_25
+2013-10-27 15:24:21,984 [myid:] - INFO  [main:Environment@100] - Server environment:java.vendor=Oracle Corporation
+2013-10-27 15:24:21,986 [myid:] - INFO  [main:Environment@100] - Server environment:java.home=/home/chris/Dropbox2/3rdparty/java/jdk1.7.0_25/jre
+2013-10-27 15:24:21,987 [myid:] - INFO  [main:Environment@100] - Server environment:java.class.path=/home/chris/esper/zookeeper/bin/../build/classes:/home/chris/esper/zookeeper/bin/../build/lib/*.jar:/home/chris/esper/zookeeper/bin/../lib/slf4j-log4j12-1.6.1.jar:/home/chris/esper/zookeeper/bin/../lib/slf4j-api-1.6.1.jar:/home/chris/esper/zookeeper/bin/../lib/netty-3.2.2.Final.jar:/home/chris/esper/zookeeper/bin/../lib/log4j-1.2.15.jar:/home/chris/esper/zookeeper/bin/../lib/jline-0.9.94.jar:/home/chris/esper/zookeeper/bin/../zookeeper-3.4.5.jar:/home/chris/esper/zookeeper/bin/../src/java/lib/*.jar:/home/chris/esper/zookeeper/bin/../conf:
+2013-10-27 15:24:21,989 [myid:] - INFO  [main:Environment@100] - Server environment:java.library.path=/usr/local/lib::/usr/java/packages/lib/i386:/lib:/usr/lib
+2013-10-27 15:24:21,990 [myid:] - INFO  [main:Environment@100] - Server environment:java.io.tmpdir=/tmp
+2013-10-27 15:24:21,993 [myid:] - INFO  [main:Environment@100] - Server environment:java.compiler=<NA>
+2013-10-27 15:24:21,994 [myid:] - INFO  [main:Environment@100] - Server environment:os.name=Linux
+2013-10-27 15:24:21,995 [myid:] - INFO  [main:Environment@100] - Server environment:os.arch=i386
+2013-10-27 15:24:21,997 [myid:] - INFO  [main:Environment@100] - Server environment:os.version=3.8.0-19-generic
+2013-10-27 15:24:22,000 [myid:] - INFO  [main:Environment@100] - Server environment:user.name=chris
+2013-10-27 15:24:22,012 [myid:] - INFO  [main:Environment@100] - Server environment:user.home=/home/chris
+2013-10-27 15:24:22,014 [myid:] - INFO  [main:Environment@100] - Server environment:user.dir=/home/chris/esper/cep/storm+kafka
+2013-10-27 15:24:22,039 [myid:] - INFO  [main:ZooKeeperServer@726] - tickTime set to 2000
+2013-10-27 15:24:22,041 [myid:] - INFO  [main:ZooKeeperServer@735] - minSessionTimeout set to -1
+2013-10-27 15:24:22,042 [myid:] - INFO  [main:ZooKeeperServer@744] - maxSessionTimeout set to -1
+2013-10-27 15:24:22,107 [myid:] - INFO  [main:NIOServerCnxnFactory@94] - binding to port 0.0.0.0/0.0.0.0:2181
+2013-10-27 15:24:22,188 [myid:] - INFO  [main:FileSnap@83] - Reading snapshot /tmp/data/version-2/snapshot.c
+2013-10-27 15:24:30,338 [myid:] - INFO  [main:FileTxnSnapLog@240] - Snapshotting: 0x5382 to /tmp/data/version-2/snapshot.5382
+2013-10-27 15:24:52,002 [myid:] - INFO  [SessionTracker:ZooKeeperServer@325] - Expiring session 0x141f7697d340016, timeout of 20000ms exceeded
+2013-10-27 15:24:52,004 [myid:] - INFO  [SessionTracker:ZooKeeperServer@325] - Expiring session 0x141f7697d340013, timeout of 20000ms exceeded
+2013-10-27 15:24:52,004 [myid:] - INFO  [SessionTracker:ZooKeeperServer@325] - Expiring session 0x141f7697d34001a, timeout of 20000ms exceeded
+2013-10-27 15:24:52,005 [myid:] - INFO  [SessionTracker:ZooKeeperServer@325] - Expiring session 0x141f7697d340014, timeout of 20000ms exceeded
+2013-10-27 15:24:52,006 [myid:] - INFO  [ProcessThread(sid:0 cport:-1)::PrepRequestProcessor@476] - Processed session termination for sessionid: 0x141f7697d340016
+2013-10-27 15:24:52,007 [myid:] - INFO  [ProcessThread(sid:0 cport:-1)::PrepRequestProcessor@476] - Processed session termination for sessionid: 0x141f7697d340013
+2013-10-27 15:24:52,007 [myid:] - INFO  [SyncThread:0:FileTxnLog@199] - Creating new log file: log.5383
+2013-10-27 15:24:52,007 [myid:] - INFO  [ProcessThread(sid:0 cport:-1)::PrepRequestProcessor@476] - Processed session termination for sessionid: 0x141f7697d34001a
+2013-10-27 15:24:52,011 [myid:] - INFO  [ProcessThread(sid:0 cport:-1)::PrepRequestProcessor@476] - Processed session termination for sessionid: 0x141f7697d340014
+2013-10-27 15:29:09,756 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50662
+2013-10-27 15:29:09,778 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50663
+2013-10-27 15:29:09,784 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50662
+2013-10-27 15:29:09,800 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50663
+2013-10-27 15:29:09,807 [myid:] - INFO  [Thread-1:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50662 (no session established for client)
+2013-10-27 15:29:09,817 [myid:] - INFO  [Thread-2:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50663 (no session established for client)
+2013-10-27 15:29:11,536 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50664
+2013-10-27 15:29:11,538 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50664
+2013-10-27 15:29:11,541 [myid:] - INFO  [Thread-3:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50664 (no session established for client)
+2013-10-27 15:29:14,035 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50665
+2013-10-27 15:29:14,037 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50665
+2013-10-27 15:29:14,041 [myid:] - INFO  [Thread-4:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50665 (no session established for client)
+2013-10-27 15:29:15,213 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50666
+2013-10-27 15:29:15,242 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:ZooKeeperServer@839] - Client attempting to establish new session at /127.0.0.1:50666
+2013-10-27 15:29:15,264 [myid:] - INFO  [SyncThread:0:ZooKeeperServer@595] - Established session 0x141fc04ba8d0000 with negotiated timeout 40000 for client /127.0.0.1:50666
+2013-10-27 15:29:16,537 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50667
+2013-10-27 15:29:16,538 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50667
+2013-10-27 15:29:16,542 [myid:] - INFO  [Thread-5:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50667 (no session established for client)
+2013-10-27 15:29:19,037 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50668
+2013-10-27 15:29:19,038 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50668
+2013-10-27 15:29:19,042 [myid:] - INFO  [Thread-6:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50668 (no session established for client)
+2013-10-27 15:29:21,539 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50669
+2013-10-27 15:29:21,542 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50669
+2013-10-27 15:29:21,544 [myid:] - INFO  [Thread-7:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50669 (no session established for client)
+2013-10-27 15:29:24,039 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50670
+2013-10-27 15:29:24,041 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50670
+2013-10-27 15:29:24,045 [myid:] - INFO  [Thread-8:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50670 (no session established for client)
+2013-10-27 15:29:26,541 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50671
+2013-10-27 15:29:26,542 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50671
+2013-10-27 15:29:26,546 [myid:] - INFO  [Thread-9:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50671 (no session established for client)
+2013-10-27 15:29:29,042 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50672
+2013-10-27 15:29:29,043 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50672
+2013-10-27 15:29:29,052 [myid:] - INFO  [Thread-10:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50672 (no session established for client)
+2013-10-27 15:29:31,543 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50673
+2013-10-27 15:29:31,544 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50673
+2013-10-27 15:29:31,548 [myid:] - INFO  [Thread-11:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50673 (no session established for client)
+2013-10-27 15:29:34,044 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50674
+2013-10-27 15:29:34,045 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50674
+2013-10-27 15:29:34,049 [myid:] - INFO  [Thread-12:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50674 (no session established for client)
+2013-10-27 15:29:36,546 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50675
+2013-10-27 15:29:36,547 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50675
+2013-10-27 15:29:36,550 [myid:] - INFO  [Thread-13:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50675 (no session established for client)
+2013-10-27 15:29:39,046 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50676
+2013-10-27 15:29:39,048 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50676
+2013-10-27 15:29:39,053 [myid:] - INFO  [Thread-14:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50676 (no session established for client)
+2013-10-27 15:29:41,548 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50677
+2013-10-27 15:29:41,550 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50677
+2013-10-27 15:29:41,552 [myid:] - INFO  [Thread-15:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50677 (no session established for client)
+2013-10-27 15:29:44,053 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50678
+2013-10-27 15:29:44,054 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50678
+2013-10-27 15:29:44,057 [myid:] - INFO  [Thread-16:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50678 (no session established for client)
+2013-10-27 15:29:46,552 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50680
+2013-10-27 15:29:46,553 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50680
+2013-10-27 15:29:46,555 [myid:] - INFO  [Thread-17:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50680 (no session established for client)
+2013-10-27 15:29:49,051 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50681
+2013-10-27 15:29:49,053 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50681
+2013-10-27 15:29:49,055 [myid:] - INFO  [Thread-18:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50681 (no session established for client)
+2013-10-27 15:29:51,554 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50682
+2013-10-27 15:29:51,556 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50682
+2013-10-27 15:29:51,558 [myid:] - INFO  [Thread-19:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50682 (no session established for client)
+2013-10-27 15:29:54,054 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50683
+2013-10-27 15:29:54,056 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50683
+2013-10-27 15:29:54,058 [myid:] - INFO  [Thread-20:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50683 (no session established for client)
+2013-10-27 15:29:56,556 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50684
+2013-10-27 15:29:56,558 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50684
+2013-10-27 15:29:56,560 [myid:] - INFO  [Thread-21:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50684 (no session established for client)
+2013-10-27 15:29:59,057 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxnFactory@197] - Accepted socket connection from /127.0.0.1:50685
+2013-10-27 15:29:59,059 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@821] - Processing ruok command from /127.0.0.1:50685
+2013-10-27 15:29:59,060 [myid:] - INFO  [Thread-22:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50685 (no session established for client)
+2013-10-27 15:30:01,807 [myid:] - WARN  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@349] - caught end of stream exception
+EndOfStreamException: Unable to read additional data from client sessionid 0x141fc04ba8d0000, likely client has closed socket
+	at org.apache.zookeeper.server.NIOServerCnxn.doIO(NIOServerCnxn.java:220)
+	at org.apache.zookeeper.server.NIOServerCnxnFactory.run(NIOServerCnxnFactory.java:208)
+	at java.lang.Thread.run(Thread.java:724)
+2013-10-27 15:30:01,811 [myid:] - INFO  [NIOServerCxn.Factory:0.0.0.0/0.0.0.0:2181:NIOServerCnxn@1001] - Closed socket connection for client /127.0.0.1:50666 which had sessionid 0x141fc04ba8d0000
