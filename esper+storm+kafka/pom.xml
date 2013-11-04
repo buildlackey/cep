@@ -140,25 +140,6 @@
             <version>4.5</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>com.netflix.curator</groupId>
-            <artifactId>curator-test</artifactId>
-            <version>1.2.5</version>
-
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-
         <!--
             3.3.3 seems to be required to run with storm, whereas 3.4.1 is required to run
             TestKafkaProducer.java in the 'kafka' project'
@@ -208,6 +189,26 @@
         </dependency>
 
 
+        <!-- testing dependencies -->
+
+        <dependency>
+            <groupId>com.netflix.curator</groupId>
+            <artifactId>curator-test</artifactId>
+            <version>1.2.5</version>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -215,6 +216,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+           <groupId>org.easymock</groupId>
+           <artifactId>easymock</artifactId>
+           <version>3.0</version>
+           <scope>test</scope>
+         </dependency>
 
     </dependencies>
 

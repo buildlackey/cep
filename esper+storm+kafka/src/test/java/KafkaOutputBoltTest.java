@@ -6,33 +6,17 @@
 
 
 import backtype.storm.Config;
-import backtype.storm.LocalCluster;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
-import com.google.common.io.Files;
-import kafka.admin.CreateTopicCommand;
-import kafka.javaapi.producer.Producer;
-import kafka.server.KafkaConfig;
-import kafka.server.KafkaServer;
-import kafka.utils.MockTime;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.concurrent.CountDownLatch;
 
 
 public class KafkaOutputBoltTest extends AbstractStormWithKafkaTest {
-    protected static final int MAX_ALLOWED_TO_RUN_MILLISECS = 1000 * 30 /* seconds */;
+    protected static final int MAX_ALLOWED_TO_RUN_MILLISECS = 1000 * 10 /* seconds */;
     protected static final int SECOND = 1000;
-    public static final String BROKER_CONNECT_STRING = "localhost:9092";    // kakfa broker server/port info
-
-    private final String topologyName = this.getClass().getSimpleName() + "-topology" + getRandomInteger(1000);
 
     private static String[] sentences = new String[]{
             "one dog9 - saw the fox over the moon",
@@ -50,13 +34,6 @@ public class KafkaOutputBoltTest extends AbstractStormWithKafkaTest {
 
     }
 
-
-    protected void submitTopology() {
-
-        final Config   conf = getDebugConfigForStormTopology();
-
-        cluster.submitTopology(topologyName, conf, createTopology());
-    }
 
     protected StormTopology createTopology() {
         IRichSpout spout = new SentenceSpout(sentences);

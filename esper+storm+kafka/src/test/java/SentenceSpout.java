@@ -39,7 +39,7 @@ public class SentenceSpout extends BaseRichSpout {
         }
         if (sentenceIndex < sentences.length) {
             String sentence = sentences[sentenceIndex];
-            System.out.println("+++++++++++++++++ output sentence: " + sentence);
+            System.out.println("+++++++++++++++++ >>> output sentence: " + sentence);
             collector.emit(new Values(sentence));
             sentenceIndex++;
         }

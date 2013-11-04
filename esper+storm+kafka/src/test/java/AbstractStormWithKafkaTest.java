@@ -7,6 +7,7 @@
 
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
+import backtype.storm.generated.StormTopology;
 import com.google.common.io.Files;
 import kafka.admin.CreateTopicCommand;
 import kafka.server.KafkaConfig;
@@ -20,8 +21,29 @@ import java.util.Properties;
 import java.util.Timer;
 import java.util.concurrent.CountDownLatch;
 
+
+/**
+ * Simplifies testing of Storm components that consume or produce data items from or to Kafka.
+ * Operates via  a 'template method' series of steps, wherein the BeforeClass method sets up a
+ * Storm Local cluster, then waits for the zookeeper instance started by that cluster to 'boot up',
+ * then starts an-process Kafka server using that zookeeper, and then creates a topic whose
+ * name is derived from the name of the base class test.
+ *
+ * Subclasses only need to implement the abstract createTopology() method (and perhaps
+ * override 'verifyResults())' which is currently kind of hard coded to our first two subclasses of
+ * this base class.
+ */
 public abstract class AbstractStormWithKafkaTest {
+    protected static String[] sentences = new String[]{
+            "one dog9 - saw the fox over the moon",
+            "two cats9 - saw the fox over the moon",
+            "four bears9 - saw the fox over the moon",
+            "five goats9 - saw the fox over the moon",
+            "SHUTDOWN",
+    };
+    protected final String BROKER_CONNECT_STRING = "localhost:9092";    // kakfa broker server/port info
     protected final String topicName =  this.getClass().getSimpleName() + "_topic_" + getRandomInteger(1000);
+    protected final String topologyName = this.getClass().getSimpleName() + "-topology" + getRandomInteger(1000);
     protected LocalCluster cluster = null;
 
     private final File kafkaWorkingDir = Files.createTempDir();
@@ -111,6 +133,10 @@ public abstract class AbstractStormWithKafkaTest {
         return properties;
     }
 
+
+    protected abstract StormTopology createTopology();
+
+
     /**
      * @return a Config object with time outs set very high so that the storm to zookeeper
      * session will be kept alive, even as we are rooting around in a debugger.
@@ -121,5 +147,33 @@ public abstract class AbstractStormWithKafkaTest {
         config.put(Config.STORM_ZOOKEEPER_CONNECTION_TIMEOUT, 600 * 1000);
         config.put(Config.STORM_ZOOKEEPER_SESSION_TIMEOUT, 600 * 1000);
         return config;
+    }
+
+    public void verifyResults() {
+        KafkaMessageConsumer msgConsumer = new KafkaMessageConsumer(getZkConnect(), topicName);
+        msgConsumer.consumeMessages();
+
+        int foundCount = 0;
+        for (String msg : msgConsumer.getMessagesReceived()) {
+            System.out.println("message: "+msg);
+            if (msg.contains("cat") ||
+                    msg.contains("dog") ||
+                    msg.contains("bear") ||
+                    msg.contains("goat") ||
+                    msg.contains("SHUTDOWN")) {
+                foundCount++;
+            }
+        }
+
+        if (foundCount != sentences.length) {
+            throw new RuntimeException(">>>>>>>>>>>>>>>>>>>>  Did not receive expected messages");
+        }
+    }
+
+    protected void submitTopology() {
+
+        final Config   conf = getDebugConfigForStormTopology();
+
+        cluster.submitTopology(topologyName, conf, createTopology());
     }
 }

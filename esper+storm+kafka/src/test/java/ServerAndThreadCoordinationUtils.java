@@ -8,11 +8,30 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.Date;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CountDownLatch;
 
 public class ServerAndThreadCoordinationUtils {
+
+    public static void main(String[] args) {
+        System.out.println("START");
+
+        Timer timer = ServerAndThreadCoordinationUtils.setMaxTimeToRunTimer(1000 *20);
+        Thread thread = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            System.out.println("JUNK-" + new Random().nextInt());
+                        }
+                    }
+                },
+                "threadBoy"
+        );
+            thread.start();
+    }
 
     public static final String SENTINEL_FILE_PATH = "/tmp/go";
 
@@ -32,7 +51,10 @@ public class ServerAndThreadCoordinationUtils {
 
             @Override
             public void run() {
-                System.out.println("aborting test !  Took too long");
+                for (int i = 0; i < 1000; i++) {
+                    System.out.println("aborting test !  Took too long");
+                }
+                System.out.flush();
                 System.exit(-1);
             }
         }, timeLimit);

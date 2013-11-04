@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * A first pass implementation of a generic Kafka Output Bolt that takes whatever tuple it
+ * recieves, JSON-ifies it, and dumps it on the Kafka topic that is configured int the
+ * constructor.
+ */
 public class KafkaOutputBolt extends BaseRichBolt {
     private static final long serialVersionUID = 1L;
 
@@ -33,7 +38,9 @@ public class KafkaOutputBolt extends BaseRichBolt {
     private transient OutputCollector collector;
     private transient TopologyContext context;
 
-    public KafkaOutputBolt(String brokerConnectString, String topicName, String serializerClass) {
+    public KafkaOutputBolt(String brokerConnectString,
+                           String topicName,
+                           String serializerClass) {
         if (serializerClass == null) {
             serializerClass = "kafka.serializer.StringEncoder";
         }
@@ -43,11 +50,12 @@ public class KafkaOutputBolt extends BaseRichBolt {
     }
 
     @Override
-    public void prepare(Map stormConf, TopologyContext context, OutputCollector collector) {
+    public void prepare(Map stormConf,
+                        TopologyContext context,
+                        OutputCollector collector) {
         Properties props = new Properties();
         props.put("metadata.broker.list", brokerConnectString);
         props.put("serializer.class", serializerClass);
-        props.put("serializer.class", "kafka.serializer.StringEncoder");
         props.put("producer.type", "sync");
         props.put("batch.size", "1");
 
@@ -61,7 +69,7 @@ public class KafkaOutputBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple input) {
         try {
-            String tupleAsJson = toJson(input);
+            String tupleAsJson = JsonHelper.toJson(input);
             KeyedMessage<String, String> data =
                     new KeyedMessage<String, String>(topicName, tupleAsJson);
             producer.send(data);
@@ -71,35 +79,21 @@ public class KafkaOutputBolt extends BaseRichBolt {
         }
     }
 
-    private String toJson(Tuple input) {
-        Fields fields = input.getFields();
-        List<String> fieldNames = fields.toList();
-
-        Map<String, Object> tupleAsMap = new HashMap<String, Object>();
-        for (String fieldName : fieldNames) {
-            tupleAsMap.put(fieldName, input.getValueByField(fieldName));
-        }
-
-        String json = new Gson().toJson(tupleAsMap);
-        System.out.println("====++++++++++++++++++++++++++::>  tuple as Json:" + json);
-        return json;
-    }
-
     @Override
     public void declareOutputFields(OutputFieldsDeclarer declarer) {
 
     }
 
     public static Producer<String, String> initProducer() throws IOException {
-          Properties props = new Properties();
-          props.put("metadata.broker.list", "localhost:9092");
-          props.put("serializer.class", "kafka.serializer.StringEncoder");
-          props.put("producer.type", "async");
-          props.put("batch.size", "1");
-          ProducerConfig config = new ProducerConfig(props);
+        Properties props = new Properties();
+        props.put("metadata.broker.list", "localhost:9092");
+        props.put("serializer.class", "kafka.serializer.StringEncoder");
+        props.put("producer.type", "async");
+        props.put("batch.size", "1");
+        ProducerConfig config = new ProducerConfig(props);
 
-          return  new Producer<String, String>(config);
-      }
+        return new Producer<String, String>(config);
+    }
 
     public static void sendMessage(String topic, String msg, Producer<String, String> producer) {
         KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, msg);
