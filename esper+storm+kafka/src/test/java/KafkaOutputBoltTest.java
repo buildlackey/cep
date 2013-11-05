@@ -5,7 +5,6 @@
  */
 
 
-import backtype.storm.Config;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
@@ -30,7 +29,7 @@ public class KafkaOutputBoltTest extends AbstractStormWithKafkaTest {
     @Test
     public void runTestWithTopology() throws IOException {
         submitTopology();
-        verifyResults();
+        verifyResults(null);
 
     }
 
@@ -51,8 +50,8 @@ public class KafkaOutputBoltTest extends AbstractStormWithKafkaTest {
     }
 
 
-    public void verifyResults() {
-        KafkaMessageConsumer msgConsumer = new KafkaMessageConsumer(getZkConnect(), topicName);
+    public void verifyResults(String topicName) {
+        KafkaMessageConsumer msgConsumer = new KafkaMessageConsumer(getZkConnect(), this.topicName);
         msgConsumer.consumeMessages();
 
         int foundCount = 0;

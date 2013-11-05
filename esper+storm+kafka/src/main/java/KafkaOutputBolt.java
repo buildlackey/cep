@@ -94,9 +94,4 @@ public class KafkaOutputBolt extends BaseRichBolt {
 
         return new Producer<String, String>(config);
     }
-
-    public static void sendMessage(String topic, String msg, Producer<String, String> producer) {
-        KeyedMessage<String, String> data = new KeyedMessage<String, String>(topic, msg);
-        producer.send(data);
-    }
 }

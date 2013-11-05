@@ -53,6 +53,7 @@
 
              In order to satisfy storm-kafka's need for scala I found that the SCALA
              version marked with INCLUDE SUBSTITUTE SCALA seems to do the trick.
+        -->
         <dependency>
             <groupId>org.clojars.brenden</groupId>
             <artifactId>storm-kafka-0.8-plus</artifactId>
@@ -70,7 +71,6 @@
 
             </exclusions>
         </dependency>
-        -->
 
         <dependency>
             <groupId>org.scala-lang</groupId>

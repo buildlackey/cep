@@ -32,25 +32,29 @@ public class KafkaMessageConsumer {
     }
 
     public List<String> consumeMessages() {
-        final ConsumerConnector consumer =
-                kafka.consumer.Consumer.createJavaConsumerConnector(createConsumerConfig());
-        final Map<String, Integer> topicCountMap = ImmutableMap.of(topic, 1);
-        final Map<String, List<KafkaStream<String,String>>> consumerMap;
+        try {
+            final ConsumerConnector consumer =
+                    kafka.consumer.Consumer.createJavaConsumerConnector(createConsumerConfig());
+            final Map<String, Integer> topicCountMap = ImmutableMap.of(topic, 1);
+            final Map<String, List<KafkaStream<String,String>>> consumerMap;
 
-        StringDecoder decoder = new StringDecoder(new VerifiableProperties());
-        consumerMap = consumer.createMessageStreams(topicCountMap, decoder,  decoder);
+            StringDecoder decoder = new StringDecoder(new VerifiableProperties());
+            consumerMap = consumer.createMessageStreams(topicCountMap, decoder,  decoder);
 
-        final KafkaStream<String,String> stream = consumerMap.get(topic).get(0);
-        final ConsumerIterator<String,String> iterator = stream.iterator();
-        while (iterator.hasNext()) {
-            String msg = iterator.next().message();
-            msg =  ( msg == null ? "<null>" : msg );
-            System.out.println("got message" + msg);
-            messagesReceived.add(msg);
-            if (msg.contains("SHUTDOWN")) {
-                consumer.shutdown();
-                return messagesReceived;
+            final KafkaStream<String,String> stream = consumerMap.get(topic).get(0);
+            final ConsumerIterator<String,String> iterator = stream.iterator();
+            while (iterator.hasNext()) {
+                String msg = iterator.next().message();
+                msg =  ( msg == null ? "<null>" : msg );
+                System.out.println("got message" + msg);
+                messagesReceived.add(msg);
+                if (msg.contains("SHUTDOWN")) {
+                    consumer.shutdown();
+                    return messagesReceived;
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
         return messagesReceived;
     }

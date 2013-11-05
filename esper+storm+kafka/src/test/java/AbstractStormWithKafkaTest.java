@@ -34,7 +34,7 @@ import java.util.concurrent.CountDownLatch;
  * this base class.
  */
 public abstract class AbstractStormWithKafkaTest {
-    protected static String[] sentences = new String[]{
+    public static String[] sentences = new String[]{
             "one dog9 - saw the fox over the moon",
             "two cats9 - saw the fox over the moon",
             "four bears9 - saw the fox over the moon",
@@ -44,6 +44,7 @@ public abstract class AbstractStormWithKafkaTest {
     protected final String BROKER_CONNECT_STRING = "localhost:9092";    // kakfa broker server/port info
     protected final String topicName =  this.getClass().getSimpleName() + "_topic_" + getRandomInteger(1000);
     protected final String topologyName = this.getClass().getSimpleName() + "-topology" + getRandomInteger(1000);
+
     protected LocalCluster cluster = null;
 
     private final File kafkaWorkingDir = Files.createTempDir();
@@ -71,6 +72,9 @@ public abstract class AbstractStormWithKafkaTest {
                     public void run() {
                         startKafkaServer();
                         createTopic(topicName);
+                        if (getSecondTopicName() != null) {
+                            createTopic(getSecondTopicName());
+                        }
                         ServerAndThreadCoordinationUtils.countDown(kafkaTopicCreatedLatch);
                     }
                 },
@@ -79,6 +83,12 @@ public abstract class AbstractStormWithKafkaTest {
         kafkaServerThread.start();
         ServerAndThreadCoordinationUtils.await(kafkaTopicCreatedLatch);
     }
+
+
+    public String getSecondTopicName() {
+        return null;
+    }
+
 
     abstract protected int getMaxAllowedToRunMillisecs();
 
@@ -144,25 +154,33 @@ public abstract class AbstractStormWithKafkaTest {
     protected Config getDebugConfigForStormTopology() {
         Config  config = new Config();
         config.setDebug(true);
-        config.put(Config.STORM_ZOOKEEPER_CONNECTION_TIMEOUT, 600 * 1000);
-        config.put(Config.STORM_ZOOKEEPER_SESSION_TIMEOUT, 600 * 1000);
+        config.put(Config.STORM_ZOOKEEPER_CONNECTION_TIMEOUT, 900 * 1000);
+        config.put(Config.STORM_ZOOKEEPER_SESSION_TIMEOUT, 900 * 1000);
         return config;
     }
 
-    public void verifyResults() {
-        KafkaMessageConsumer msgConsumer = new KafkaMessageConsumer(getZkConnect(), topicName);
-        msgConsumer.consumeMessages();
-
+    public void verifyResults(String topic) {
+        if (topic == null) {
+            topic =  this.topicName;
+        }
         int foundCount = 0;
-        for (String msg : msgConsumer.getMessagesReceived()) {
-            System.out.println("message: "+msg);
-            if (msg.contains("cat") ||
-                    msg.contains("dog") ||
-                    msg.contains("bear") ||
-                    msg.contains("goat") ||
-                    msg.contains("SHUTDOWN")) {
-                foundCount++;
+        try {
+            KafkaMessageConsumer msgConsumer = new KafkaMessageConsumer(getZkConnect(), topic);
+            msgConsumer.consumeMessages();
+
+            foundCount = 0;
+            for (String msg : msgConsumer.getMessagesReceived()) {
+                System.out.println("message: "+msg);
+                if (msg.contains("cat") ||
+                        msg.contains("dog") ||
+                        msg.contains("bear") ||
+                        msg.contains("goat") ||
+                        msg.contains("SHUTDOWN")) {
+                    foundCount++;
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
         if (foundCount != sentences.length) {
