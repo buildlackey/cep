@@ -50,14 +50,20 @@ class TestKafkaProducer {
             tkp = new TestKafkaProducer(
                     theTopic,
                     "localhost:" + zookeeperTestServer.getPort(),
-                    10);
+                    4400);
 
             tkp.sendMessages();
-
             tkp.consumeMessages();
-            tkp.shutdownConsumers();
-            tkp.kafkaMessageReceiverThread.join();
-            tkp.shutdown();
+
+            try {               // Give consumer some time...
+                tkp.shutdownConsumers();
+                Thread.sleep(1000);
+                tkp.kafkaMessageReceiverThread.join();
+                tkp.shutdown();
+            } catch (Exception e) {
+                System.out.println("Error in shut down. we will ignore it as long as our messages came through");
+                e.printStackTrace();
+            }
 
             String got = StringUtils.join(tkp.messagesReceived, "+");
             String expected = StringUtils.join(tkp.messages, "+");
@@ -129,7 +135,14 @@ class TestKafkaProducer {
 
     public void shutdown() {
         producer.close();
+        try {               // Give producer some time...
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         kafkaServer.shutdown();
+        kafkaServer.awaitShutdown();
     }
 
 

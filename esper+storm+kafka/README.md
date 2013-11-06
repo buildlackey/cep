@@ -12,7 +12,7 @@ This example illustrates how to wire up Kafka, Storm and Esper. Not quite done y
 KafkaOutputBolt 
 
       A first pass implementation of a generic Kafka Output Bolt that takes whatever tuple it
-      recieves, JSON-ifies it, and dumps it on the Kafka topic that is configured int the 
+      recieves, JSON-ifies it, and dumps it on the Kafka topic that is configured in the 
       constructor. 
 
 ExternalFeedToKafkaAdapterSpout
@@ -31,7 +31,7 @@ AbstractStormWithKafkaTest
       Simplifies testing of Storm components that consume or produce data items from or to Kafka.
       Operates via  a 'template method' series of steps, wherein the BeforeClass method sets up a 
       Storm Local cluster, then waits for the zookeeper instance started by that cluster to 'boot up', 
-      then starts an-process Kafka server using that zookeeper, and then creates a topic whose
+      then starts an in-process Kafka server using that zookeeper, and then creates a topic whose
       name is derived from the name of the base class test.
      
       Subclasses only need to implement the abstract createTopology() method (and perhaps
