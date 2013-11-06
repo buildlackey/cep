@@ -19,6 +19,12 @@ import java.util.Map;
 import java.util.Properties;
 
 
+/**
+ *  Uses Kafka high level consumer API to read from the topic passed in as a constructor argument and
+ *  accumulates all messages read in so that after the test the received messages can be obtained by a
+ *  call to getMessagesReceived(). This enables test driver code to verify that sent messages actually
+ *  equal received messages.
+ */
 public class KafkaMessageConsumer {
     private final String zkConnect;
 

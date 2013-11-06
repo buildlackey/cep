@@ -15,6 +15,13 @@ import storm.kafka.*;
 import java.io.IOException;
 
 
+/**
+ * This test builds on ExternalFeedToKafkaAdapterSpoutTest. The external feed messages are dumped
+ * into a Kafka topic by ExternalFeedToKafkaAdapterSpout as in the first test. We add the second step
+ * of pulling the messages from the topic by a KafkaSpout and making sure those messages are what
+ * we expect.  To clarify:  ExternalFeedToKafkaAdapterSpout pushes messages into a topic, and KafkaSpout
+ * pulls messages out of a topic.
+ */
 @Test
 public class StormKafkaSpoutGetsInputViaAdaptedExternalFeedTest extends AbstractStormWithKafkaTest {
     protected static volatile boolean finishedCollecting = false;

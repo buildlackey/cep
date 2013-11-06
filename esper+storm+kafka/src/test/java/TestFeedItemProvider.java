@@ -10,12 +10,20 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 class TestFeedItemProvider implements IFeedItemProvider {
     ConcurrentLinkedQueue<String> itemQueue = new ConcurrentLinkedQueue<String>();
 
+    private String[] sentences =  ExternalFeedToKafkaAdapterSpoutTest.sentences;    // default
+
+    TestFeedItemProvider() {}
+
+    TestFeedItemProvider(String[] sentences) {
+       this.sentences = sentences;
+    }
+
     @Override
     public Runnable getRunnableTask() {
         return new Runnable() {
             @Override
             public void run() {
-                for (String sentence : ExternalFeedToKafkaAdapterSpoutTest.sentences) {
+                for (String sentence : sentences) {
                     itemQueue.offer(sentence);
                 }
                 try {

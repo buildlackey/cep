@@ -12,7 +12,12 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-
+/**
+ *  In this test messages from an external feed (a hard coded array of strings) are dumped into a
+ *  Kafka topic by an instance of ExternalFeedToKafkaAdapterSpout.  We then use an instance of
+ *  KafkaMessageConsumer to pull those messages off the topic, and verify that what we
+ *  got is equal to what we expect.
+ */
 @Test
 public class ExternalFeedToKafkaAdapterSpoutTest extends AbstractStormWithKafkaTest {
 
