@@ -6,8 +6,14 @@ Example Illustrating a Kafka Consumer Spout, a Kafka Producer Bolt, and an Esper
 
 ## Description
 
-This example illustrates how to wire up Kafka, Storm and Esper. Not quite done yet, but we have developed some useful components.
 
+The test class 'ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest' illustrates how to wire up Kafka, Storm and Esper.  In this test, ExternalFeedToKafkaAdapterSpout  pushes messages into a topic. These messages are then routed into an EsperBolt which uses the Esper query language to do some simple filtering, We then route the filtered messages to a KafkaOutputBolt which dumps the filtered messages on a second topic. We use an instance of Kafka MessageConsumer to pull those messages off the second topic, and we verify that what we got is equal to what we expect.
+
+We use Thomas Dudziak's storm-esper library to bind an Esper query processing engine instance to a Storm Bolt  (More info on that library is available here: http://tomdzk.wordpress.com/2011/09/28/storm-esper)
+
+
+
+A list of the main components involved in this example follows:
 
 KafkaOutputBolt 
 
@@ -46,11 +52,9 @@ AbstractStormWithKafkaTest
 ## Building and Running
 
 After downloading the project, cd to the directory in which  this README is located, then issue the 2 commands below
-(note that the second command has two variants):
 
      mvn clean  compile test
     
-## Implementation Details
 
 
 

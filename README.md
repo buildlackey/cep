@@ -39,3 +39,13 @@ storm+kafka
 
         * An Integration test that pushes messages into Kafka and retrieves those messages with a Kafka/Storm spout.
 
+
+
+esper+storm+kafka
+
+    includes
+
+
+        * An Integration test that pushes messages into Kafka, pulls them back (via Kafka Spout), filters them using Esper, and dumps them back out to another Kafka Spout (via KafkaOutputBolt).
+
+
