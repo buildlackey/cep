@@ -38,7 +38,7 @@ public class StormKafkaSpoutGetsInputViaAdaptedExternalFeedTest extends Abstract
         System.out.println("topic: " + getTopicName());
         submitTopology();
         waitForResultsFromStormKafkaSpoutToAppearInCollectorBolt();
-        verifyResults(null);
+        verifyResults(null, -1);
 
     }
 

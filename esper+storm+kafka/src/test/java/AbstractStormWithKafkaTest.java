@@ -28,7 +28,7 @@ import java.util.concurrent.CountDownLatch;
  * Storm Local cluster, then waits for the zookeeper instance started by that cluster to 'boot up',
  * then starts an-process Kafka server using that zookeeper, and then creates a topic whose
  * name is derived from the name of the base class test.
- *
+ * <p/>
  * Subclasses only need to implement the abstract createTopology() method (and perhaps
  * override 'verifyResults())' which is currently kind of hard coded to our first two subclasses of
  * this base class.
@@ -42,7 +42,7 @@ public abstract class AbstractStormWithKafkaTest {
             "SHUTDOWN",
     };
     protected final String BROKER_CONNECT_STRING = "localhost:9092";    // kakfa broker server/port info
-    private final String topicName =  this.getClass().getSimpleName() + "_topic_" + getRandomInteger(1000);
+    private final String topicName = this.getClass().getSimpleName() + "_topic_" + getRandomInteger(1000);
     protected final String topologyName = this.getClass().getSimpleName() + "-topology" + getRandomInteger(1000);
 
     protected LocalCluster cluster = null;
@@ -149,28 +149,33 @@ public abstract class AbstractStormWithKafkaTest {
 
     /**
      * @return a Config object with time outs set very high so that the storm to zookeeper
-     * session will be kept alive, even as we are rooting around in a debugger.
+     *         session will be kept alive, even as we are rooting around in a debugger.
      */
     protected Config getDebugConfigForStormTopology() {
-        Config  config = new Config();
+        Config config = new Config();
         config.setDebug(true);
         config.put(Config.STORM_ZOOKEEPER_CONNECTION_TIMEOUT, 900 * 1000);
         config.put(Config.STORM_ZOOKEEPER_SESSION_TIMEOUT, 900 * 1000);
         return config;
     }
 
-    public void verifyResults(String topic) {
+    public void verifyResults(String topic, int expectedCount) {
         if (topic == null) {
             topic = this.getTopicName();
         }
+        if (expectedCount == -1) {
+            expectedCount = sentences.length;
+        }
+
         int foundCount = 0;
+        KafkaMessageConsumer msgConsumer = null;
         try {
-            KafkaMessageConsumer msgConsumer = new KafkaMessageConsumer(getZkConnect(), topic);
+            msgConsumer = new KafkaMessageConsumer(getZkConnect(), topic);
             msgConsumer.consumeMessages();
 
             foundCount = 0;
             for (String msg : msgConsumer.getMessagesReceived()) {
-                System.out.println("message: "+msg);
+                System.out.println("message: " + msg);
                 if (msg.contains("cat") ||
                         msg.contains("dog") ||
                         msg.contains("bear") ||
@@ -180,17 +185,22 @@ public abstract class AbstractStormWithKafkaTest {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
-        if (foundCount != sentences.length) {
+        if (foundCount != expectedCount) {
+            if (msgConsumer != null) {
+                System.out.println("Did not receive expected messages. Got: " +
+                        msgConsumer.getMessagesReceived());
+            }
+
             throw new RuntimeException(">>>>>>>>>>>>>>>>>>>>  Did not receive expected messages");
         }
     }
 
     protected void submitTopology() {
 
-        final Config   conf = getDebugConfigForStormTopology();
+        final Config conf = getDebugConfigForStormTopology();
 
         cluster.submitTopology(topologyName, conf, createTopology());
     }

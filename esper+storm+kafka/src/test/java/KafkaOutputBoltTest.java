@@ -29,7 +29,7 @@ public class KafkaOutputBoltTest extends AbstractStormWithKafkaTest {
     @Test
     public void runTestWithTopology() throws IOException {
         submitTopology();
-        verifyResults(null);
+        verifyResults(null, -1);
 
     }
 

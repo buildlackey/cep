@@ -10,6 +10,7 @@ import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
 import org.testng.annotations.Test;
+import org.tomdz.storm.esper.EsperBolt;
 import storm.kafka.*;
 
 import java.io.IOException;
@@ -24,14 +25,16 @@ import java.io.IOException;
  */
 @Test
 public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends AbstractStormWithKafkaTest {
+    public static final int EXPECTED_COUNT = 6;
     protected static volatile boolean finishedCollecting = false;
 
-    protected static final int MAX_ALLOWED_TO_RUN_MILLISECS = 1000 * 2000 /* seconds */;
+    protected static final int MAX_ALLOWED_TO_RUN_MILLISECS = 1000 * 15 /* seconds */;
     protected static final int SECOND = 1000;
 
     private static int STORM_KAFKA_FROM_READ_FROM_START = -2;
     private static int STORM_KAFKA_FROM_READ_FROM_CURRENT_OFFSET = -1;
     private final String secondTopic = this.getClass().getSimpleName() + "topic" + getRandomInteger(1000);
+    private volatile boolean testPassed = true;   // assume the best
 
 
     @Test
@@ -44,7 +47,9 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("}}}}ENDING");
+        if (! testPassed) {
+            throw new RuntimeException("Test did not pass. Got messages: " );
+        }
     }
 
     @Override
@@ -55,24 +60,41 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
     @Override
     protected StormTopology createTopology() {
         TopologyBuilder builder = new TopologyBuilder();
+
         IRichSpout feedSpout =
                 new ExternalFeedToKafkaAdapterSpout(
                         new TestFeedItemProvider(getTestSentences()),
                         BROKER_CONNECT_STRING,
                         getTopicName(), null);
-        builder.setSpout("externalFeedSpout", feedSpout);
-        builder.setSpout("kafkaSpout", createKafkaSpout());
-
+        EsperBolt esperBolt = createEsperBolt();
         KafkaOutputBolt kafkaOutputBolt =
                 new KafkaOutputBolt(BROKER_CONNECT_STRING, getSecondTopicName(), null);
-        builder.setBolt("kafkaOutputBolt", kafkaOutputBolt, 1)
+
+        builder.setSpout("externalFeedSpout", feedSpout);   // these spouts are bound together by shared topic
+        builder.setSpout("kafkaSpout", createKafkaSpout());
+
+        builder.setBolt("esperBolt", esperBolt, 1)
                 .shuffleGrouping("kafkaSpout");
+        builder.setBolt("kafkaOutputBolt", kafkaOutputBolt, 1)
+                .shuffleGrouping("esperBolt");
 
         return builder.createTopology();
     }
 
     protected int getMaxAllowedToRunMillisecs() {
         return ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest.MAX_ALLOWED_TO_RUN_MILLISECS;
+    }
+
+    private EsperBolt createEsperBolt() {
+        String esperQuery=
+                "select  str as found from OneWordMsg.win:length_batch(2) where str like '%at%'";
+        EsperBolt esperBolt = new EsperBolt.Builder()
+                .inputs().aliasComponent("kafkaSpout").
+                        withFields("str").ofType(String.class).toEventType("OneWordMsg")
+                .outputs().onDefaultStream().emit("found")
+                .statements().add(esperQuery)
+                .build();
+        return esperBolt;
     }
 
     private void waitForResultsFromStormKafkaSpoutToAppearInCollectorBolt() {
@@ -95,27 +117,49 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
     }
 
 
+    // EXPECTED_COUNT - consumer will see 6 occurrences of cat out of 6 batches of 2
+    // The shutdown will trigger when we see the first 'cat - SHUTDOWN'. That's why the
+    // consumer does not see 7 cats.
     private String[] getTestSentences() {
         return new String[]{
-                "one dog9 - saw the fox over the moon",
-                "two cats9 - saw the fox over the moon",
-                "four bears9 - saw the fox over the moon",
-                "five goats9 - saw the fox over the moon",
-                "SHUTDOWN",
+                "cat",
+                "pig",
+
+                "pig",
+                "pig",
+
+                "pig",
+                "cat",
+
+                "cat",
+                "pig",
+
+                "cat",
+                "cat",
+
+                "cat - SHUTDOWN",
+                "cat - SHUTDOWN",
         };
 
     }
 
     private Thread setupVerifyThreadToListenOnSecondTopic() {
+        Thread.UncaughtExceptionHandler uncaughtHandler  = new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread th, Throwable ex) {
+                testPassed = false;
+            }
+        };
         Thread verifyThread = new Thread(
                 new Runnable() {
                     @Override
                     public void run() {
-                        verifyResults(getSecondTopicName());
+                        verifyResults(getSecondTopicName(), EXPECTED_COUNT);
                     }
                 },
                 "verifyThread"
         );
+        verifyThread.setUncaughtExceptionHandler( uncaughtHandler );
         verifyThread.start();
         return verifyThread;
     }

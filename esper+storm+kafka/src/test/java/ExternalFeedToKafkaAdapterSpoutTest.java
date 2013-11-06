@@ -33,7 +33,7 @@ public class ExternalFeedToKafkaAdapterSpoutTest extends AbstractStormWithKafkaT
         } catch (InterruptedException e) {
             e.printStackTrace();   // do something more meaningful here?
         }
-        verifyResults(null);
+        verifyResults(null, -1);
 
     }
 
