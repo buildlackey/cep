@@ -42,7 +42,7 @@ public abstract class AbstractStormWithKafkaTest {
             "SHUTDOWN",
     };
     protected final String BROKER_CONNECT_STRING = "localhost:9092";    // kakfa broker server/port info
-    protected final String topicName =  this.getClass().getSimpleName() + "_topic_" + getRandomInteger(1000);
+    private final String topicName =  this.getClass().getSimpleName() + "_topic_" + getRandomInteger(1000);
     protected final String topologyName = this.getClass().getSimpleName() + "-topology" + getRandomInteger(1000);
 
     protected LocalCluster cluster = null;
@@ -71,7 +71,7 @@ public abstract class AbstractStormWithKafkaTest {
                     @Override
                     public void run() {
                         startKafkaServer();
-                        createTopic(topicName);
+                        createTopic(getTopicName());
                         if (getSecondTopicName() != null) {
                             createTopic(getSecondTopicName());
                         }
@@ -161,7 +161,7 @@ public abstract class AbstractStormWithKafkaTest {
 
     public void verifyResults(String topic) {
         if (topic == null) {
-            topic =  this.topicName;
+            topic = this.getTopicName();
         }
         int foundCount = 0;
         try {
@@ -193,5 +193,9 @@ public abstract class AbstractStormWithKafkaTest {
         final Config   conf = getDebugConfigForStormTopology();
 
         cluster.submitTopology(topologyName, conf, createTopology());
+    }
+
+    public String getTopicName() {
+        return topicName;
     }
 }

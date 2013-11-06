@@ -35,40 +35,16 @@ public class KafkaOutputBoltTest extends AbstractStormWithKafkaTest {
 
 
     protected StormTopology createTopology() {
-        IRichSpout spout = new SentenceSpout(sentences);
-
-        KafkaOutputBolt kafkaOutputBolt = new KafkaOutputBolt(BROKER_CONNECT_STRING, topicName, null);
-
-
         TopologyBuilder builder = new TopologyBuilder();
+        IRichSpout spout = new SentenceSpout(sentences);
+        KafkaOutputBolt kafkaOutputBolt =
+                new KafkaOutputBolt(BROKER_CONNECT_STRING, getTopicName(), null);
 
         builder.setSpout("sentenceSpout", spout);
         builder.setBolt("kafkaOutputBolt", kafkaOutputBolt, 1)
                 .shuffleGrouping("sentenceSpout");
 
         return builder.createTopology();
-    }
-
-
-    public void verifyResults(String topicName) {
-        KafkaMessageConsumer msgConsumer = new KafkaMessageConsumer(getZkConnect(), this.topicName);
-        msgConsumer.consumeMessages();
-
-        int foundCount = 0;
-        for (String msg : msgConsumer.getMessagesReceived()) {
-            System.out.println("message: "+msg);
-            if (msg.contains("cat") ||
-                    msg.contains("dog") ||
-                    msg.contains("bear") ||
-                    msg.contains("goat") ||
-                    msg.contains("SHUTDOWN")) {
-                foundCount++;
-            }
-        }
-
-        if (foundCount != sentences.length) {
-            throw new RuntimeException(">>>>>>>>>>>>>>>>>>>>  Did not receive expected messages");
-        }
     }
 
 

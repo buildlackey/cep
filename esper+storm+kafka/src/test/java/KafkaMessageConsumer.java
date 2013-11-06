@@ -32,6 +32,8 @@ public class KafkaMessageConsumer {
     }
 
     public List<String> consumeMessages() {
+        String ttt = topic;
+        System.out.println("topic in kafka consumer: " + topic);
         try {
             final ConsumerConnector consumer =
                     kafka.consumer.Consumer.createJavaConsumerConnector(createConsumerConfig());

@@ -16,7 +16,7 @@ import java.io.IOException;
 
 
 @Test
-public class StormKafkaSpoutGetsInputViaAdaptedExternalFeedTest extends AbstractStormWithKafkaTest {
+public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends AbstractStormWithKafkaTest {
     protected static volatile boolean finishedCollecting = false;
 
     protected static final int MAX_ALLOWED_TO_RUN_MILLISECS = 1000 * 20 /* seconds */;
@@ -24,15 +24,39 @@ public class StormKafkaSpoutGetsInputViaAdaptedExternalFeedTest extends Abstract
 
     private static int STORM_KAFKA_FROM_READ_FROM_START = -2;
     private static int STORM_KAFKA_FROM_READ_FROM_CURRENT_OFFSET = -1;
+    private final String secondTopic =  this.getClass().getSimpleName() + "topic" + getRandomInteger(1000);
 
 
     @Test
     public void runTestWithTopology() throws IOException {
-        System.out.println("topic: " + getTopicName());
-        submitTopology();
-        waitForResultsFromStormKafkaSpoutToAppearInCollectorBolt();
-        verifyResults(null);
+        System.out.println("topic: " + getTopicName() + "second topic:" + getSecondTopicName());
+        Thread verifyThread =  setupVerifyThreadToListenOnSecondTopic();
+        submitTopology();  // The last bolt in this topology will write to second topic
+        try {
+            verifyThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("}}}}ENDING");
+    }
 
+    private Thread setupVerifyThreadToListenOnSecondTopic() {
+        Thread verifyThread = new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        verifyResults(getSecondTopicName());
+                    }
+                },
+                "verifyThread"
+        );
+        verifyThread.start();
+        return verifyThread;
+    }
+
+    @Override
+    public String getSecondTopicName() {
+        return  secondTopic;
     }
 
     private void waitForResultsFromStormKafkaSpoutToAppearInCollectorBolt() {
@@ -56,14 +80,17 @@ public class StormKafkaSpoutGetsInputViaAdaptedExternalFeedTest extends Abstract
                         getTopicName(), null);
         builder.setSpout("externalFeedSpout", feedSpout);
         builder.setSpout("kafkaSpout", createKafkaSpout());
-        VerboseCollectorBolt bolt = new VerboseCollectorBolt(5);
-        builder.setBolt("collector", bolt).shuffleGrouping("kafkaSpout");
+
+        KafkaOutputBolt kafkaOutputBolt =
+                new KafkaOutputBolt(BROKER_CONNECT_STRING, getSecondTopicName(), null);
+        builder.setBolt("kafkaOutputBolt", kafkaOutputBolt, 1)
+                .shuffleGrouping("kafkaSpout");
 
         return builder.createTopology();
     }
 
 
-    private   KafkaSpout createKafkaSpout() {
+    private KafkaSpout createKafkaSpout() {
         BrokerHosts brokerHosts = new ZkHosts(getZkConnect());
         SpoutConfig kafkaConfig = new SpoutConfig(brokerHosts, getTopicName(), "", "storm");
         kafkaConfig.forceStartOffsetTime(STORM_KAFKA_FROM_READ_FROM_START);
@@ -73,7 +100,8 @@ public class StormKafkaSpoutGetsInputViaAdaptedExternalFeedTest extends Abstract
 
 
     protected int getMaxAllowedToRunMillisecs() {
-        return StormKafkaSpoutGetsInputViaAdaptedExternalFeedTest.MAX_ALLOWED_TO_RUN_MILLISECS;
+        return ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest.MAX_ALLOWED_TO_RUN_MILLISECS;
     }
+
 }
 
