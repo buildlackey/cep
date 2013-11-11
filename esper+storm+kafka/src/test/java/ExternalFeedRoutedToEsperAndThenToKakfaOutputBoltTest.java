@@ -9,10 +9,12 @@ import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.IRichSpout;
 import backtype.storm.topology.TopologyBuilder;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import org.tomdz.storm.esper.EsperBolt;
 import storm.kafka.*;
 
+import java.io.File;
 import java.io.IOException;
 
 
@@ -36,12 +38,27 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
     private final String secondTopic = this.getClass().getSimpleName() + "topic" + getRandomInteger(1000);
     private volatile boolean testPassed = true;   // assume the best
 
+    @BeforeClass
+    protected void deleteFiles() {
+        deleteSentinelFile("/tmp/before.storm");
+        deleteSentinelFile("/tmp/after.storm");
+    }
+
+    private void deleteSentinelFile(String pathname) {
+        File sentinel = new File(pathname);
+        sentinel.delete();
+        if (sentinel.exists()) {
+            throw new RuntimeException("Could not delete sentinel file");
+        }
+    }
 
     @Test
     public void runTestWithTopology() throws IOException {
         System.out.println("topic: " + getTopicName() + "second topic:" + getSecondTopicName());
+        ServerAndThreadCoordinationUtils.pauseUntil("/tmp/before.storm");
+        submitTopology();                              // The last bolt in this topology will write to second topic
+        ServerAndThreadCoordinationUtils.pauseUntil("/tmp/after.storm");
         Thread verifyThread = setupVerifyThreadToListenOnSecondTopic();
-        submitTopology();  // The last bolt in this topology will write to second topic
         try {
             verifyThread.join();
         } catch (InterruptedException e) {

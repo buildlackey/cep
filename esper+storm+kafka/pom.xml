@@ -19,6 +19,30 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>com.restfb</groupId>
+            <artifactId>restfb</artifactId>
+            <version>1.6.12</version>
+        </dependency>
+
+        <dependency>
+                  <groupId>org.twitter4j</groupId>
+                  <artifactId>twitter4j-core</artifactId>
+                  <version>[3.0,)</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.twitter4j</groupId>
+            <artifactId>twitter4j-stream</artifactId>
+            <version>[3.0,)</version>
+        </dependency>
+
+        <dependency>
+        	<groupId>commons-collections</groupId>
+        	<artifactId>commons-collections</artifactId>
+        	<version>3.2.1</version>
+        </dependency>
+
 
         <dependency>
             <groupId>com.jayway.awaitility</groupId>
@@ -27,10 +51,10 @@
         </dependency>
 
         <dependency>
-        	<groupId>com.google.code.gson</groupId>
-        	<artifactId>gson</artifactId>
-        	<version>1.7.1</version>
-          </dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>1.7.1</version>
+        </dependency>
 
         <!--  using  0.9.0-rc2 Storm because there seems to be source code available for that -->
         <dependency>
@@ -145,39 +169,39 @@
             TestKafkaProducer.java in the 'kafka' project'
         -->
         <dependency>
-               <groupId>org.apache.zookeeper</groupId>
-               <artifactId>zookeeper</artifactId>
-               <version>3.3.3</version>
-               <exclusions>
-                   <exclusion>
-                       <groupId>org.slf4j</groupId>
-                       <artifactId>slf4j-log4j12</artifactId>
-                   </exclusion>
-                   <exclusion>
-                       <groupId>log4j</groupId>
-                       <artifactId>log4j</artifactId>
-                   </exclusion>
-                   <exclusion>
-                       <groupId>log4j</groupId>
-                       <artifactId>log4j</artifactId>
-                   </exclusion>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+            <version>3.3.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
 
-                   <exclusion>
-                       <groupId>com.sun.jmx</groupId>
-                       <artifactId>jmxri</artifactId>
-                   </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
 
-                   <exclusion>
-                       <groupId>com.sun.jdmk</groupId>
-                       <artifactId>jmxtools</artifactId>
-                   </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
 
-                   <exclusion>
-                       <groupId>javax.jms</groupId>
-                       <artifactId>jms</artifactId>
-                   </exclusion>
-               </exclusions>
-           </dependency>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 
         <!-- Storm/Esper bolt support -->
@@ -217,11 +241,11 @@
         </dependency>
 
         <dependency>
-           <groupId>org.easymock</groupId>
-           <artifactId>easymock</artifactId>
-           <version>3.0</version>
-           <scope>test</scope>
-         </dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <version>3.0</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
