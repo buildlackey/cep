@@ -1,0 +1,23 @@
+<assembly>
+    <id>jar</id>
+
+    <formats><format>jar</format></formats>
+
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+
+            <excludes>
+               <exclude>storm:storm</exclude>
+               <exclude>ch.qos.logback:logback-classic</exclude>
+            </excludes>
+        </dependencySet>
+    </dependencySets>
+</assembly>
+

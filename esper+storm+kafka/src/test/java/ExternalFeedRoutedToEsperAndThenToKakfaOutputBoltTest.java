@@ -20,7 +20,6 @@ import java.io.IOException;
  * dumps the filtered messages on a second topic. We use an instance of Kafka MessageConsumer to pull those
  * messages off the second topic, and we verify that what we got is equal to what we expect.
  */
-@Test
 public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends AbstractStormWithKafkaTest {
     public static final int EXPECTED_COUNT = 6;
     protected static volatile boolean finishedCollecting = false;

@@ -360,17 +360,17 @@
                                 File targetDir = new File("${project.basedir.path}/target".toString())
                                 println "dir is ${targetDir.path}"
                                 String jarBaseName = "${project.artifactId}-${project.version}"
-                                File jarWithUnwantedStuff = new File(targetDir,  "${jarBaseName}-jar.jar".toString())
+                                File jarWithUnwantedStuff = new File(targetDir, "${jarBaseName}-jar.jar".toString())
 
-                                def explodedJarDir  = new File(targetDir, "explodedJar".toString())
+                                def explodedJarDir = new File(targetDir, "explodedJar".toString())
                                 def ant = new AntBuilder()   // create an antbuilder
-                                ant.unzip(  src:"${jarWithUnwantedStuff.path}",
-                                            dest: explodedJarDir.path,
-                                            overwrite:"false" )
+                                ant.unzip(src: "${jarWithUnwantedStuff.path}",
+                                        dest: explodedJarDir.path,
+                                        overwrite: "false")
                                 File finalJar = new File(targetDir, "${jarBaseName}-deployable.jar")
                                 unwantedClassesDir = new File(explodedJarDir, "/org/slf4j/impl".toString())
                                 unwantedClassesDir.deleteDir()
-                                ant.zip(basedir: explodedJarDir.path, destFile:  finalJar .path)
+                                ant.zip(basedir: explodedJarDir.path, destFile: finalJar.path)
                             </source>
                         </configuration>
                     </execution>
