@@ -21,7 +21,11 @@ public class TwitterFeedItemProvider implements IFeedItemProvider {
     public class TwitterListener implements StatusListener {
         @Override
         public void onStatus(Status status) {
-            itemQueue.offer(status.getText());
+            String text = status.getText();
+            if(status.isRetweet()){
+                 text = status.getRetweetedStatus().getText();
+            }
+            itemQueue.offer(text);
         }
 
         @Override
@@ -47,7 +51,7 @@ public class TwitterFeedItemProvider implements IFeedItemProvider {
     }
 
     public static void main(String[] args) throws TwitterException, IOException {
-        TwitterFeedItemProvider provider = new TwitterFeedItemProvider("meatFillers");
+        TwitterFeedItemProvider provider = new TwitterFeedItemProvider("#reviews");
         Thread thread = new Thread(provider.getRunnableTask(), "twitterFeedItemProviderThread");
         thread.start();
 

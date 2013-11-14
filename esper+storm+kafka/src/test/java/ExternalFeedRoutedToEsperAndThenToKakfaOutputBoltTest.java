@@ -6,13 +6,8 @@
 
 
 import backtype.storm.generated.StormTopology;
-import backtype.storm.spout.SchemeAsMultiScheme;
-import backtype.storm.topology.IRichSpout;
-import backtype.storm.topology.TopologyBuilder;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.tomdz.storm.esper.EsperBolt;
-import storm.kafka.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,11 +25,9 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
     public static final int EXPECTED_COUNT = 6;
     protected static volatile boolean finishedCollecting = false;
 
-    protected static final int MAX_ALLOWED_TO_RUN_MILLISECS = 1000 * 15 /* seconds */;
+    protected static final int MAX_ALLOWED_TO_RUN_MILLISECS = 1000 * 25 /* seconds */;
     protected static final int SECOND = 1000;
 
-    private static int STORM_KAFKA_FROM_READ_FROM_START = -2;
-    private static int STORM_KAFKA_FROM_READ_FROM_CURRENT_OFFSET = -1;
     private final String secondTopic = this.getClass().getSimpleName() + "topic" + getRandomInteger(1000);
     private volatile boolean testPassed = true;   // assume the best
 
@@ -55,17 +48,17 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
     @Test
     public void runTestWithTopology() throws IOException {
         System.out.println("topic: " + getTopicName() + "second topic:" + getSecondTopicName());
-        ServerAndThreadCoordinationUtils.pauseUntil("/tmp/before.storm");
+        //ServerAndThreadCoordinationUtils.pauseUntil("/tmp/before.storm");
         submitTopology();                              // The last bolt in this topology will write to second topic
-        ServerAndThreadCoordinationUtils.pauseUntil("/tmp/after.storm");
+        //ServerAndThreadCoordinationUtils.pauseUntil("/tmp/after.storm");
         Thread verifyThread = setupVerifyThreadToListenOnSecondTopic();
         try {
             verifyThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (! testPassed) {
-            throw new RuntimeException("Test did not pass. Got messages: " );
+        if (!testPassed) {
+            throw new RuntimeException("Test did not pass. Got messages: ");
         }
     }
 
@@ -76,42 +69,17 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
 
     @Override
     protected StormTopology createTopology() {
-        TopologyBuilder builder = new TopologyBuilder();
-
-        IRichSpout feedSpout =
-                new ExternalFeedToKafkaAdapterSpout(
-                        new TestFeedItemProvider(getTestSentences()),
+        return TopologyInitializer.
+                createTopology(
+                        getZkConnect(),
                         BROKER_CONNECT_STRING,
-                        getTopicName(), null);
-        EsperBolt esperBolt = createEsperBolt();
-        KafkaOutputBolt kafkaOutputBolt =
-                new KafkaOutputBolt(BROKER_CONNECT_STRING, getSecondTopicName(), null);
-
-        builder.setSpout("externalFeedSpout", feedSpout);   // these spouts are bound together by shared topic
-        builder.setSpout("kafkaSpout", createKafkaSpout());
-
-        builder.setBolt("esperBolt", esperBolt, 1)
-                .shuffleGrouping("kafkaSpout");
-        builder.setBolt("kafkaOutputBolt", kafkaOutputBolt, 1)
-                .shuffleGrouping("esperBolt");
-
-        return builder.createTopology();
+                        getTopicName(),
+                        getSecondTopicName(),
+                        new TestFeedItemProvider(getTestSentences()), false);
     }
 
     protected int getMaxAllowedToRunMillisecs() {
         return ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest.MAX_ALLOWED_TO_RUN_MILLISECS;
-    }
-
-    private EsperBolt createEsperBolt() {
-        String esperQuery=
-                "select  str as found from OneWordMsg.win:length_batch(2) where str like '%at%'";
-        EsperBolt esperBolt = new EsperBolt.Builder()
-                .inputs().aliasComponent("kafkaSpout").
-                        withFields("str").ofType(String.class).toEventType("OneWordMsg")
-                .outputs().onDefaultStream().emit("found")
-                .statements().add(esperQuery)
-                .build();
-        return esperBolt;
     }
 
     private void waitForResultsFromStormKafkaSpoutToAppearInCollectorBolt() {
@@ -123,14 +91,6 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
             }
         }
         System.out.println("DONE");
-    }
-
-    private KafkaSpout createKafkaSpout() {
-        BrokerHosts brokerHosts = new ZkHosts(getZkConnect());
-        SpoutConfig kafkaConfig = new SpoutConfig(brokerHosts, getTopicName(), "", "storm");
-        kafkaConfig.forceStartOffsetTime(STORM_KAFKA_FROM_READ_FROM_START);
-        kafkaConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
-        return new KafkaSpout(kafkaConfig);
     }
 
 
@@ -161,7 +121,7 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
     }
 
     private Thread setupVerifyThreadToListenOnSecondTopic() {
-        Thread.UncaughtExceptionHandler uncaughtHandler  = new Thread.UncaughtExceptionHandler() {
+        Thread.UncaughtExceptionHandler uncaughtHandler = new Thread.UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Thread th, Throwable ex) {
                 testPassed = false;
@@ -176,7 +136,7 @@ public class ExternalFeedRoutedToEsperAndThenToKakfaOutputBoltTest extends Abstr
                 },
                 "verifyThread"
         );
-        verifyThread.setUncaughtExceptionHandler( uncaughtHandler );
+        verifyThread.setUncaughtExceptionHandler(uncaughtHandler);
         verifyThread.start();
         return verifyThread;
     }

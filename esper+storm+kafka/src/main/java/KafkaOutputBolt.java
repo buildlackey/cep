@@ -24,11 +24,20 @@ import java.util.Properties;
 
 /**
  * A first pass implementation of a generic Kafka Output Bolt that takes whatever tuple it
- * recieves, JSON-ifies it, and dumps it on the Kafka topic that is configured int the
- * constructor.
+ * recieves, JSON-ifies it, and dumps it on the Kafka topic that is configured in the
+ * constructor.  By default the JSON-ification algorithms works such that the Json object's
+ * attribute names are the field names of the tuples (currently only 1-tuples are supported).
+ * In other words, the JSON-ified value is contructed as a map with key names derived from
+ * tuple field names and corresponding values set as the JSON-ified tuple object.
+ *
+ * However, if the KafkaOutputBolt constructor is called with rawMode=true, then for a 1-tuple
+ * we will assume the tuple value is a valid JSON string.   TODO - we will eventually support
+ * tuples of length 2 and greater, at which point raw mode will boil down to putting the 'raw'
+ * valid JSON strings given by the i-th element of each tuple into an array.
  */
 public class KafkaOutputBolt extends BaseRichBolt {
     private static final long serialVersionUID = 1L;
+    private final boolean rawMode;
 
     private String brokerConnectString;
     private String topicName;
@@ -40,13 +49,15 @@ public class KafkaOutputBolt extends BaseRichBolt {
 
     public KafkaOutputBolt(String brokerConnectString,
                            String topicName,
-                           String serializerClass) {
+                           String serializerClass,
+                           boolean rawMode) {
         if (serializerClass == null) {
             serializerClass = "kafka.serializer.StringEncoder";
         }
         this.brokerConnectString = brokerConnectString;
         this.serializerClass = serializerClass;
         this.topicName = topicName;
+        this.rawMode = rawMode;
     }
 
     @Override
@@ -68,8 +79,14 @@ public class KafkaOutputBolt extends BaseRichBolt {
 
     @Override
     public void execute(Tuple input) {
+        String tupleAsJson = null;
         try {
-            String tupleAsJson = JsonHelper.toJson(input);
+            if (rawMode) {
+                tupleAsJson = input.getString(0);
+
+            } else {
+                tupleAsJson = JsonHelper.toJson(input);
+            }
             KeyedMessage<String, String> data =
                     new KeyedMessage<String, String>(topicName, tupleAsJson);
             producer.send(data);

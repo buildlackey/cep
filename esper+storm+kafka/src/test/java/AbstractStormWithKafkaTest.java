@@ -151,7 +151,7 @@ public abstract class AbstractStormWithKafkaTest {
      * @return a Config object with time outs set very high so that the storm to zookeeper
      *         session will be kept alive, even as we are rooting around in a debugger.
      */
-    protected Config getDebugConfigForStormTopology() {
+    public static Config getDebugConfigForStormTopology() {
         Config config = new Config();
         config.setDebug(true);
         config.put(Config.STORM_ZOOKEEPER_CONNECTION_TIMEOUT, 900 * 1000);

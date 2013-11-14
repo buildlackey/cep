@@ -38,7 +38,7 @@ public class KafkaOutputBoltTest extends AbstractStormWithKafkaTest {
         TopologyBuilder builder = new TopologyBuilder();
         IRichSpout spout = new SentenceSpout(sentences);
         KafkaOutputBolt kafkaOutputBolt =
-                new KafkaOutputBolt(BROKER_CONNECT_STRING, getTopicName(), null);
+                new KafkaOutputBolt(BROKER_CONNECT_STRING, getTopicName(), null, false);
 
         builder.setSpout("sentenceSpout", spout);
         builder.setBolt("kafkaOutputBolt", kafkaOutputBolt, 1)
