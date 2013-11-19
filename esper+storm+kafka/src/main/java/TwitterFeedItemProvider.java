@@ -15,15 +15,21 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 public class TwitterFeedItemProvider implements IFeedItemProvider {
-    private final String[] searchTerms;
     private final ConcurrentLinkedQueue<String> itemQueue = new ConcurrentLinkedQueue<String>();
+
+    private final String oAuthConsumerKey;
+    private final String oAuthConsumerSecret;
+    private final String oAuthAccessToken;
+    private final String oAuthAccessTokenSecret;
+    private final String[] searchTerms;
+
 
     public class TwitterListener implements StatusListener {
         @Override
         public void onStatus(Status status) {
             String text = status.getText();
-            if(status.isRetweet()){
-                 text = status.getRetweetedStatus().getText();
+            if (status.isRetweet()) {
+                text = status.getRetweetedStatus().getText();
             }
             itemQueue.offer(text);
         }
@@ -50,31 +56,23 @@ public class TwitterFeedItemProvider implements IFeedItemProvider {
         }
     }
 
-    public static void main(String[] args) throws TwitterException, IOException {
-        TwitterFeedItemProvider provider = new TwitterFeedItemProvider("#reviews");
-        Thread thread = new Thread(provider.getRunnableTask(), "twitterFeedItemProviderThread");
-        thread.start();
-
-        while (true) {
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            String item = (String) provider.getNextItemIfAvailable(); //itemQueue.poll();
-            if (item != null) {
-                System.out.println("+++++++++++++ >>>: " + item);
-            } else {
-                //System.out.println("+++++++++++++ no queue item");
-            }
-        }
-    }
+    /*
 
     TwitterFeedItemProvider(List<String> searchTermsList) {
         this.searchTerms = searchTermsList.toArray(new String[searchTermsList.size()]);
     }
+     */
 
-    TwitterFeedItemProvider(String... terms) {
+    TwitterFeedItemProvider(final String oAuthConsumerKey,
+                            final String oAuthConsumerSecret,
+                            final String oAuthAccessToken,
+                            final String oAuthAccessTokenSecret,
+                            String... terms) {
+        this.oAuthConsumerKey = oAuthConsumerKey;
+        this.oAuthConsumerSecret = oAuthConsumerSecret;
+        this.oAuthAccessToken = oAuthAccessToken;
+        this.oAuthAccessTokenSecret = oAuthAccessTokenSecret;
+
         this.searchTerms = terms;
     }
 
@@ -94,10 +92,10 @@ public class TwitterFeedItemProvider implements IFeedItemProvider {
     private TwitterStream getTwitterStream() {
         TwitterStream twitterStream;
         ConfigurationBuilder builder = new ConfigurationBuilder();
-        builder.setOAuthConsumerKey(System.getenv("setOAuthConsumerKey"));
-        builder.setOAuthConsumerSecret(System.getenv("setOAuthConsumerSecret"));
-        builder.setOAuthAccessToken(System.getenv("setOAuthAccessToken"));
-        builder.setOAuthAccessTokenSecret(System.getenv("setOAuthAccessTokenSecret"));
+        builder.setOAuthConsumerKey(oAuthConsumerKey);
+        builder.setOAuthConsumerSecret(oAuthConsumerSecret);
+        builder.setOAuthAccessToken(oAuthAccessToken);
+        builder.setOAuthAccessTokenSecret(oAuthAccessTokenSecret);
 
         Configuration conf = builder.build();
 
